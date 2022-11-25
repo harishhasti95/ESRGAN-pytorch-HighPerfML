@@ -38,7 +38,8 @@ with torch.no_grad():
     net = ESRGAN(3, 3, scale_factor=4)
     net.load_state_dict(net_interp)
     net = net.to(device).eval()
-
+    
+    
     config_list = [{
         'sparsity': 0.8,
         'op_types': ['Conv2d']
@@ -47,11 +48,19 @@ with torch.no_grad():
     _, masks = pruner.compress()
     pruner.show_pruned_weights()
     pruner._unwrap_model()
-    torch.save(masks, 'parameters\masks.pth')
-    net_interp_ = torch.load('parameters\masks.pth')
-    print(net_interp_.keys() == net_interp.keys())
+    
+    
+    load_dict = OrderedDict()
+    for i in masks.keys():
+        temp_outer = str(i)
+        for j in masks[i]:
+            temp_inner = str(j)
+            temp = temp_outer + '.' + temp_inner
+            load_dict[temp] = masks[i][temp_inner]
+    torch.save(load_dict, 'parameters\masks.pth')
+    
     net = ESRGAN(3, 3, scale_factor=4)
-    net.load_state_dict(net_interp_)
+    net.load_state_dict(torch.load('parameters\masks.pth'))
     net = net.to(device).eval()
 
     for image_name in os.listdir(args.lr_dir):
