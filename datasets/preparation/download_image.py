@@ -17,9 +17,12 @@ def download_dataset():
     if not os.path.exists(os.path.join('lr')):
         os.makedirs(os.path.join('lr'))
 
-    download_url(DIV2K_HR, os.path.join('temp', 'DIV2K_HR.zip'))
-    download_url(DIV2K_LR, os.path.join('temp', 'DIV2K_LR.zip'))
-    download_url(FLICKR2K, os.path.join('temp', 'FLICKR2K.tar'))
+    if not os.path.exists(os.path.join('temp', 'DIV2K_HR.zip')):
+        download_url(DIV2K_HR, os.path.join('temp', 'DIV2K_HR.zip'))
+    if not os.path.exists(os.path.join('temp', 'DIV2K_LR.zip')):
+        download_url(DIV2K_LR, os.path.join('temp', 'DIV2K_LR.zip'))
+    if not os.path.exists(os.path.join('temp', 'FLICKR2K.tar')):
+        download_url(FLICKR2K, os.path.join('temp', 'FLICKR2K.tar'))
 
     print('[!] Upzip zipfile')
     unzip_zip_file(os.path.join('temp', 'DIV2K_HR.zip'), 'temp')
